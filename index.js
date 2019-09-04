@@ -1,5 +1,5 @@
-const lib = require("./src/index");
+const etherscanBalances = require("./src/index");
 
-lib
-  .getMostChangedAddress(100) // Кол-во т последних блоков
+etherscanBalances
+  .getMostChangedAddress(100)
   .catch(err => console.log(err));

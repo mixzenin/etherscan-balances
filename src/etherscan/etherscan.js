@@ -1,40 +1,36 @@
 const request = require("request");
-const addresses = new Map();
-const ETHERSCAN_URL_API = "https://api.etherscan.io/api";
+const ETHERSCAN_URL_API = require("./config").ETHERSCAN_URL_API;
 
-let getLastBlockNumber = () => {
-  return new Promise((resolve, reject) => {
-    request(
-      {
-        uri: ETHERSCAN_URL_API,
-        qs: {
-          module: "proxy",
-          action: "eth_blockNumber"
-        },
-        json: true
-      },
-      (error, response, body) => {
-        error ? reject(error) : resolve(body.result); // поле result содержит номер блока в 16ричной СС
-      }
-    );
-  });
+let getLastBlockNumber = async () => {
+  const qs = {
+    module: "proxy",
+    action: "eth_blockNumber"
+  };
+  const response = await callEtherscanApi(qs);
+  return response.result;
 };
 
-let getTransactionsInBlock = blockNumber => {
+let getTransactionsInBlock = async blockNumber => {
+  const qs = {
+    module: "proxy",
+    action: "eth_getBlockByNumber",
+    tag: blockNumber,
+    boolean: true
+  };
+  const response = await callEtherscanApi(qs)
+  return response.result.transactions
+};
+
+let callEtherscanApi = qs => {
   return new Promise((resolve, reject) => {
     request(
       {
         uri: ETHERSCAN_URL_API,
-        qs: {
-          module: "proxy",
-          action: "eth_getBlockByNumber",
-          tag: blockNumber,
-          boolean: true
-        },
+        qs,
         json: true
       },
       (error, response, body) => {
-        error ? reject(error) : resolve(body.result.transactions);
+        error ? reject(error) : resolve(body);
       }
     );
   });

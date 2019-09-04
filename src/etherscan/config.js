@@ -1,0 +1,1 @@
+exports.ETHERSCAN_URL_API = "https://api.etherscan.io/api";    
